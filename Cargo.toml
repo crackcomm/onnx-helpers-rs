@@ -1,0 +1,16 @@
+[package]
+name = "onnx-helpers"
+version = "0.0.1"
+authors = ["Łukasz Kurowski <crackcomm@gmail.com>"]
+edition = "2018"
+license = "MIT"
+description = "ONNX model construction helpers."
+homepage = "https://github.com/crackcomm/onnx-helpers-rs"
+repository = "https://github.com/crackcomm/onnx-helpers-rs.git"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bytes = "^0.5.0"
+prost = "^0.5.0"
+onnx-pb = "^0.0.3"
