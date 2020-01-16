@@ -12,5 +12,5 @@ repository = "https://github.com/crackcomm/onnx-helpers-rs.git"
 
 [dependencies]
 bytes = "^0.5.0"
-prost = "^0.5.0"
-onnx-pb = "^0.0.4"
+prost = "^0.6.1"
+onnx-pb = "^0.1.0"

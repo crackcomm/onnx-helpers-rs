@@ -122,6 +122,12 @@ impl Into<NodeProto> for Node {
     }
 }
 
+impl From<Node> for String {
+    fn from(node: Node) -> String {
+        select_output(&node.inner)
+    }
+}
+
 impl From<&Node> for String {
     fn from(node: &Node) -> String {
         select_output(&node.inner)
@@ -133,18 +139,6 @@ impl From<&mut Node> for String {
         select_output(&node.inner)
     }
 }
-
-// impl Into<String> for &mut Node {
-//     fn into(self) -> String {
-//         select_output(self)
-//     }
-// }
-
-// impl Into<String> for &mut Node {
-//     fn into(self) -> String {
-//         select_output(self)
-//     }
-// }
 
 impl AsRef<NodeProto> for Node {
     #[inline(always)]
