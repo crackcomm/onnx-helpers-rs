@@ -27,6 +27,12 @@ macro_rules! attr_converter {
     };
 }
 
+impl From<bool> for Attribute {
+    fn from(v: bool) -> Self {
+        Attribute::Int(if v { 1 } else { 0 })
+    }
+}
+
 attr_converter!(Float, f32);
 attr_converter!(Floats, Vec<f32>);
 attr_converter!(Int, i64);

@@ -10,10 +10,13 @@ fn main() {
     let x = builder::Node::default().name("X").build();
     let y = builder::Node::default().name("Y").build();
 
+    let one = Node::from(1.0f32);
+
     let r = &x + &y;
     let r2 = &r + &x;
-    let r3 = &r2 + &y;
+    let r3 = &r2 / &y;
     let r4 = &r3 + &r2;
+    let r5 = &r4 - &one;
 
     let x_input = builder::Value::new("X")
         .typed(DataType::Float)
@@ -22,10 +25,12 @@ fn main() {
         .typed(DataType::Float)
         .shape(vec![1, 10]);
     let graph = builder::Graph::new("add")
+        .node(one)
         .node(r)
         .node(r2)
         .node(r3)
         .node(r4)
+        .node(r5)
         .input(x_input)
         .input(y_input);
 

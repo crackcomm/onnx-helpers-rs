@@ -47,6 +47,13 @@ impl Value {
         self
     }
 
+    /// Inserts value dimension.
+    #[inline]
+    pub fn dim<D: Into<Dimension>>(mut self, dim: D) -> Self {
+        self.shape.push(dim.into());
+        self
+    }
+
     /// Builds the node.
     #[inline]
     pub fn build(self) -> ValueInfoProto {

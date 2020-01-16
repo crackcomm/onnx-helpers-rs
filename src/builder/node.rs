@@ -77,12 +77,21 @@ impl Node {
         let name = if let Some(name) = self.name {
             name
         } else {
-            format!("{}_{}", self.op_type, self.inputs.join("_"))
+            if self.inputs.len() == 2 {
+                format!(
+                    "{}_{}_{}",
+                    self.inputs.get(0).unwrap(),
+                    self.op_type,
+                    self.inputs.get(1).unwrap()
+                )
+            } else {
+                format!("{}_{}_N", self.op_type, self.inputs.join("_"))
+            }
         };
         let output = if self.outputs.len() > 0 {
             self.outputs
         } else {
-            vec![format!("{}_OUT", name)]
+            vec![format!("OOF_{}", name)]
         };
         NodeProto {
             name,
