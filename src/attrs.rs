@@ -1,6 +1,6 @@
 //! ONNX node attribute helpers.
 
-use onnx_pb::{GraphProto, TensorProto};
+use onnx_pb::{attribute_proto::AttributeType, AttributeProto, GraphProto, TensorProto};
 
 /// Attribute constructor.
 pub enum Attribute {
@@ -52,4 +52,62 @@ impl From<Vec<&str>> for Attribute {
             .collect::<Vec<_>>()
             .into()
     }
+}
+
+/// Creates a new attribute struct.
+pub(crate) fn make_attribute<S: Into<String>, A: Into<Attribute>>(
+    name: S,
+    attribute: A,
+) -> AttributeProto {
+    let mut attr_proto = AttributeProto {
+        name: name.into(),
+        ..AttributeProto::default()
+    };
+    match attribute.into() {
+        Attribute::Float(val) => {
+            attr_proto.f = val;
+            attr_proto.r#type = AttributeType::Float as i32;
+        }
+        Attribute::Floats(vals) => {
+            attr_proto.floats = vals;
+            attr_proto.r#type = AttributeType::Floats as i32;
+        }
+        Attribute::Int(val) => {
+            attr_proto.i = val;
+            attr_proto.r#type = AttributeType::Int as i32;
+        }
+        Attribute::Ints(vals) => {
+            attr_proto.ints = vals;
+            attr_proto.r#type = AttributeType::Ints as i32;
+        }
+        Attribute::Bytes(val) => {
+            attr_proto.s = val;
+            attr_proto.r#type = AttributeType::String as i32;
+        }
+        Attribute::String(val) => {
+            attr_proto.s = val.into();
+            attr_proto.r#type = AttributeType::String as i32;
+        }
+        Attribute::Strings(vals) => {
+            attr_proto.strings = vals.into_iter().map(Into::into).collect();
+            attr_proto.r#type = AttributeType::Strings as i32;
+        }
+        Attribute::Graph(val) => {
+            attr_proto.g = Some(val);
+            attr_proto.r#type = AttributeType::Graph as i32;
+        }
+        Attribute::Graphs(vals) => {
+            attr_proto.graphs = vals;
+            attr_proto.r#type = AttributeType::Graphs as i32;
+        }
+        Attribute::Tensor(val) => {
+            attr_proto.t = Some(val);
+            attr_proto.r#type = AttributeType::Tensor as i32;
+        }
+        Attribute::Tensors(vals) => {
+            attr_proto.tensors = vals;
+            attr_proto.r#type = AttributeType::Tensors as i32;
+        }
+    };
+    attr_proto
 }
