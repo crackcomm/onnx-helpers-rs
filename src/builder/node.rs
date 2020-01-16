@@ -84,7 +84,7 @@ impl Node {
 
     /// Builds the node.
     #[inline]
-    pub fn build(mut self) -> nodes::Node {
+    pub fn build(self) -> nodes::Node {
         let name = if let Some(name) = self.name {
             name
         } else {
@@ -114,7 +114,7 @@ impl Node {
             attribute: self.attributes,
         };
         let mut node = nodes::Node::from(proto);
-        nodes::maybe_bag_node(self.bag.as_mut(), &mut node);
+        nodes::maybe_bag_node(self.bag.clone(), &mut node);
         node
     }
 }

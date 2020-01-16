@@ -25,81 +25,81 @@ impl Node {
     }
 
     /// Creates new square root operation.
-    pub fn sqrt(&mut self) -> Node {
+    pub fn sqrt(&self) -> Node {
         let mut node: Node = ops::Sqrt::new(select_output(&self.inner)).into();
-        maybe_bag_node(self.bag.as_mut(), &mut node);
+        maybe_bag_node(self.bag.clone(), &mut node);
         node
     }
 
     /// Creates new power operation.
-    pub fn pow<T: Into<String>>(&mut self, power: T) -> Node {
+    pub fn pow<T: Into<String>>(&self, power: T) -> Node {
         let mut node: Node = ops::Pow::new(select_output(&self.inner), power).into();
-        maybe_bag_node(self.bag.as_mut(), &mut node);
+        maybe_bag_node(self.bag.clone(), &mut node);
         node
     }
 
     /// Creates new reduce sum operation.
-    pub fn sum<A: Into<Attribute>>(&mut self, axes: A, keepdims: bool) -> Node {
+    pub fn sum<A: Into<Attribute>>(&self, axes: A, keepdims: bool) -> Node {
         let mut node: Node = ops::ReduceSum::new(select_output(&self.inner), axes, keepdims).into();
-        maybe_bag_node(self.bag.as_mut(), &mut node);
+        maybe_bag_node(self.bag.clone(), &mut node);
         node
     }
 
     /// Creates new reduce mean operation.
-    pub fn mean<A: Into<Attribute>>(&mut self, axes: A, keepdims: bool) -> Node {
+    pub fn mean<A: Into<Attribute>>(&self, axes: A, keepdims: bool) -> Node {
         let mut node: Node =
             ops::ReduceMean::new(select_output(&self.inner), axes, keepdims).into();
-        maybe_bag_node(self.bag.as_mut(), &mut node);
+        maybe_bag_node(self.bag.clone(), &mut node);
         node
     }
 }
 
-impl<Rhs: AsRef<Node>> std::ops::Add<Rhs> for &mut Node {
+impl<Rhs: AsRef<Node>> std::ops::Add<Rhs> for &Node {
     type Output = Node;
 
     fn add(self, rhs: Rhs) -> Self::Output {
         let mut node: Node = ops::Add::new(select_output(&self.inner), rhs.as_ref()).into();
-        maybe_bag_node(self.bag.as_mut(), &mut node);
+        maybe_bag_node(self.bag.clone(), &mut node);
         node
     }
 }
 
-impl<Rhs: AsRef<Node>> std::ops::Sub<Rhs> for &mut Node {
+impl<Rhs: AsRef<Node>> std::ops::Sub<Rhs> for &Node {
     type Output = Node;
 
     fn sub(self, rhs: Rhs) -> Self::Output {
         let mut node: Node = ops::Sub::new(select_output(&self.inner), rhs.as_ref()).into();
-        maybe_bag_node(self.bag.as_mut(), &mut node);
+        maybe_bag_node(self.bag.clone(), &mut node);
         node
     }
 }
 
-impl<Rhs: AsRef<Node>> std::ops::Mul<Rhs> for &mut Node {
+impl<Rhs: AsRef<Node>> std::ops::Mul<Rhs> for &Node {
     type Output = Node;
 
     fn mul(self, rhs: Rhs) -> Self::Output {
         let mut node: Node = ops::Mul::new(select_output(&self.inner), rhs.as_ref()).into();
-        maybe_bag_node(self.bag.as_mut(), &mut node);
+        maybe_bag_node(self.bag.clone(), &mut node);
         node
     }
 }
 
-impl<Rhs: AsRef<Node>> std::ops::Div<Rhs> for &mut Node {
+impl<Rhs: AsRef<Node>> std::ops::Div<Rhs> for &Node {
     type Output = Node;
 
     fn div(self, rhs: Rhs) -> Self::Output {
         let mut node: Node = ops::Div::new(select_output(&self.inner), rhs.as_ref()).into();
-        maybe_bag_node(self.bag.as_mut(), &mut node);
+        maybe_bag_node(self.bag.clone(), &mut node);
         node
     }
 }
 
-impl std::ops::Neg for &mut Node {
+impl std::ops::Neg for &Node {
     type Output = Node;
 
     fn neg(self) -> Self::Output {
         let mut node: Node = ops::Neg::new(select_output(&self.inner)).into();
-        maybe_bag_node(self.bag.as_mut(), &mut node);
+        maybe_bag_node(self.bag.clone(), &mut node);
         node
     }
 }
@@ -134,12 +134,6 @@ impl From<&Node> for String {
     }
 }
 
-impl From<&mut Node> for String {
-    fn from(node: &mut Node) -> String {
-        select_output(&node.inner)
-    }
-}
-
 impl AsRef<NodeProto> for Node {
     #[inline(always)]
     fn as_ref(&self) -> &NodeProto {
@@ -164,8 +158,8 @@ fn select_output(node: &NodeProto) -> String {
 }
 
 #[inline(always)]
-pub(crate) fn maybe_bag_node(bag: Option<&mut Bag>, node: &mut Node) {
-    if let Some(bag) = bag {
+pub(crate) fn maybe_bag_node(bag: Option<Bag>, node: &mut Node) {
+    if let Some(mut bag) = bag {
         node.bag = Some(bag.clone());
         bag.node(node.clone());
     }
