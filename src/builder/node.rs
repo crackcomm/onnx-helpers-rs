@@ -96,13 +96,18 @@ impl Node {
                     self.inputs.get(1).unwrap()
                 )
             } else {
-                format!("{}_{}_N", self.op_type, self.inputs.join("_"))
+                format!(
+                    "S{}_{}_{}E",
+                    self.op_type,
+                    self.inputs.join("_"),
+                    self.op_type
+                )
             }
         };
         let output = if self.outputs.len() > 0 {
             self.outputs
         } else {
-            vec![format!("OOF_{}", name)]
+            vec![format!("{}O", name)]
         };
         let proto = NodeProto {
             name,
@@ -113,7 +118,7 @@ impl Node {
             output: output,
             attribute: self.attributes,
         };
-        let mut node = nodes::Node::from(proto);
+        let mut node = nodes::Node::from_proto(proto);
         nodes::maybe_bag_node(self.bag.clone(), &mut node);
         node
     }

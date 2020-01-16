@@ -16,6 +16,7 @@ pub struct Graph {
     outputs: Vec<ValueInfoProto>,
     initializers: Vec<TensorProto>,
     doc_string: Option<String>,
+    constants: i64,
     bag: Bag,
 }
 
@@ -45,9 +46,11 @@ impl Graph {
 
     /// Creates constant node in a graph.
     #[inline]
-    pub fn constant<T: Into<nodes::Node>>(&mut self, node: T) -> nodes::Node {
-        let node = node.into();
+    pub fn constant<T: Into<TensorProto>>(&mut self, tensor: T) -> nodes::Node {
+        let node: nodes::Node =
+            nodes::ops::Constant::new(format!("Constant_{}", self.constants), tensor).into();
         self.nodes.push(node.clone().into());
+        self.constants += 1;
         node
     }
 

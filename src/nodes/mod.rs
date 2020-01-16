@@ -2,7 +2,7 @@
 
 pub mod ops;
 
-use onnx_pb::NodeProto;
+use onnx_pb::{NodeProto, TensorProto};
 
 use crate::{attrs::Attribute, builder::Bag};
 
@@ -14,6 +14,11 @@ pub struct Node {
 }
 
 impl Node {
+    /// Creates new node from proto.
+    pub fn from_proto(inner: NodeProto) -> Self {
+        Node { bag: None, inner }
+    }
+
     /// Returns node name.
     pub fn name(&self) -> &str {
         &self.inner.name
@@ -156,13 +161,7 @@ impl std::ops::Neg for Node {
 
 impl From<NodeProto> for Node {
     fn from(inner: NodeProto) -> Self {
-        Node { bag: None, inner }
-    }
-}
-
-impl From<f32> for Node {
-    fn from(value: f32) -> Self {
-        ops::Constant::new(format!("C_{:.2}", value).replace('.', "_"), vec![value]).into()
+        Node::from_proto(inner)
     }
 }
 

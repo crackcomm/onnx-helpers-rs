@@ -13,11 +13,8 @@ fn main() {
         .node();
 
     let two = graph.constant(2.0f32);
-
     let mean = x.mean(vec![1i64], true);
-    let mean_diff = -(&x - mean);
-    let double_mean_diff = mean_diff * two;
-    let graph = graph.outputs(double_mean_diff + x);
+    let graph = graph.outputs(-(&x - mean) * two + x);
     let model = builder::Model::new(graph).producer_name("adder").build();
 
     let mut b = Vec::with_capacity(1024);
