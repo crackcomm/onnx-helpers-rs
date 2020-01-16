@@ -1,6 +1,6 @@
 //! Reduce mean operation.
 
-use crate::{builder, node_to_inner, nodes::Node};
+use crate::{attrs::Attribute, builder, node_to_inner, nodes::Node};
 
 /// Reduce mean node.
 pub struct ReduceMean {
@@ -9,9 +9,13 @@ pub struct ReduceMean {
 
 impl ReduceMean {
     /// Creates new reduce mean operation.
-    pub fn new<S: Into<String>>(input: S) -> Self {
+    pub fn new<S: Into<String>, A: Into<Attribute>>(input: S, axes: A, keepdims: bool) -> Self {
         ReduceMean {
-            inner: builder::Node::new("ReduceMean").input(input).build(),
+            inner: builder::Node::new("ReduceMean")
+                .input(input)
+                .attribute("axes", axes)
+                .attribute("keepdims", keepdims)
+                .build(),
         }
     }
 }

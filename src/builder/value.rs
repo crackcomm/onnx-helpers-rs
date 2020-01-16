@@ -7,6 +7,11 @@ use onnx_pb::{
     TensorShapeProto, TypeProto, ValueInfoProto,
 };
 
+use crate::{
+    builder::{Bag, Marker, Node},
+    nodes,
+};
+
 /// Value info builder.
 #[derive(Default, Clone)]
 pub struct Value {
@@ -14,6 +19,8 @@ pub struct Value {
     elem_type: DataType,
     shape: Vec<Dimension>,
     doc_string: Option<String>,
+    pub(crate) bag: Option<Bag>,
+    pub(crate) marker: Option<Marker>,
 }
 
 impl Value {
@@ -54,7 +61,20 @@ impl Value {
         self
     }
 
-    /// Builds the node.
+    /// Creates node for input.
+    /// Requires builder to be bagged.
+    #[inline]
+    pub fn node(self) -> nodes::Node {
+        let mut node = Node::named(self.name.clone()).build();
+        node.bag = self.bag.clone();
+        let marker = self.marker.as_ref().unwrap().clone();
+        let mut bag: Bag = self.bag.as_ref().unwrap().clone();
+        let value = self.build();
+        bag.value(value, marker);
+        node
+    }
+
+    /// Builds the value info.
     #[inline]
     pub fn build(self) -> ValueInfoProto {
         ValueInfoProto {

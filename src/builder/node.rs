@@ -4,6 +4,7 @@ use onnx_pb::{AttributeProto, NodeProto};
 
 use crate::{
     attrs::{make_attribute, Attribute},
+    builder::Bag,
     nodes,
 };
 
@@ -17,6 +18,7 @@ pub struct Node {
     doc_string: Option<String>,
     domain: Option<String>,
     attributes: Vec<AttributeProto>,
+    pub(crate) bag: Option<Bag>,
 }
 
 impl Node {
@@ -25,6 +27,15 @@ impl Node {
     pub fn new<S: Into<String>>(op_type: S) -> Self {
         Node {
             op_type: op_type.into(),
+            ..Node::default()
+        }
+    }
+
+    /// Creates a new builder.
+    #[inline]
+    pub fn named<S: Into<String>>(name: S) -> Self {
+        Node {
+            name: Some(name.into()),
             ..Node::default()
         }
     }
@@ -73,7 +84,7 @@ impl Node {
 
     /// Builds the node.
     #[inline]
-    pub fn build(self) -> nodes::Node {
+    pub fn build(mut self) -> nodes::Node {
         let name = if let Some(name) = self.name {
             name
         } else {
@@ -93,7 +104,7 @@ impl Node {
         } else {
             vec![format!("OOF_{}", name)]
         };
-        NodeProto {
+        let proto = NodeProto {
             name,
             domain: self.domain.unwrap_or_default(),
             op_type: self.op_type,
@@ -101,8 +112,10 @@ impl Node {
             input: self.inputs,
             output: output,
             attribute: self.attributes,
-        }
-        .into()
+        };
+        let mut node = nodes::Node::from(proto);
+        nodes::maybe_bag_node(self.bag.as_mut(), &mut node);
+        node
     }
 }
 
