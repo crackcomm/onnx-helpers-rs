@@ -64,7 +64,27 @@ impl<Rhs: AsRef<Node>> std::ops::Add<Rhs> for &Node {
     }
 }
 
+impl<Rhs: AsRef<Node>> std::ops::Add<Rhs> for Node {
+    type Output = Node;
+
+    fn add(self, rhs: Rhs) -> Self::Output {
+        let mut node: Node = ops::Add::new(select_output(&self.inner), rhs.as_ref()).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+}
+
 impl<Rhs: AsRef<Node>> std::ops::Sub<Rhs> for &Node {
+    type Output = Node;
+
+    fn sub(self, rhs: Rhs) -> Self::Output {
+        let mut node: Node = ops::Sub::new(select_output(&self.inner), rhs.as_ref()).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+}
+
+impl<Rhs: AsRef<Node>> std::ops::Sub<Rhs> for Node {
     type Output = Node;
 
     fn sub(self, rhs: Rhs) -> Self::Output {
@@ -84,6 +104,16 @@ impl<Rhs: AsRef<Node>> std::ops::Mul<Rhs> for &Node {
     }
 }
 
+impl<Rhs: AsRef<Node>> std::ops::Mul<Rhs> for Node {
+    type Output = Node;
+
+    fn mul(self, rhs: Rhs) -> Self::Output {
+        let mut node: Node = ops::Mul::new(select_output(&self.inner), rhs.as_ref()).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+}
+
 impl<Rhs: AsRef<Node>> std::ops::Div<Rhs> for &Node {
     type Output = Node;
 
@@ -94,7 +124,27 @@ impl<Rhs: AsRef<Node>> std::ops::Div<Rhs> for &Node {
     }
 }
 
+impl<Rhs: AsRef<Node>> std::ops::Div<Rhs> for Node {
+    type Output = Node;
+
+    fn div(self, rhs: Rhs) -> Self::Output {
+        let mut node: Node = ops::Div::new(select_output(&self.inner), rhs.as_ref()).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+}
+
 impl std::ops::Neg for &Node {
+    type Output = Node;
+
+    fn neg(self) -> Self::Output {
+        let mut node: Node = ops::Neg::new(select_output(&self.inner)).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+}
+
+impl std::ops::Neg for Node {
     type Output = Node;
 
     fn neg(self) -> Self::Output {
