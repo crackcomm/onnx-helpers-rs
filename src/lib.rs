@@ -23,24 +23,20 @@ mod tests {
     use prost::Message;
 
     use onnx_pb::{tensor_proto::DataType, ModelProto};
+    use onnx_shape_inference::shape_inference;
 
     #[test]
-    fn compare_with_py_output() {
-        let from_python = ModelProto::decode(&read_buf("tests/model.onnx")).unwrap();
-        // let x_input = make_tensor_value_info("X", DataType::Float, vec![1, 10], None);
-        let x_input = builder::Value::new("X")
-            .typed(DataType::Float)
-            .shape(vec![1, 10]);
-        let mean_reduce = builder::Node::new("ReduceMean")
-            .input("X")
-            .output("Z")
-            .attribute("axes", vec![1i64]);
-        let graph = builder::Graph::new("reduce-mean")
-            .node(mean_reduce)
-            .input(x_input);
+    fn compare_with_prev_output() {
+        let prev_output =
+            ModelProto::decode(read_buf("tests/mean-reverse.onnx").as_slice()).unwrap();
+        let mut graph = builder::Graph::new("reverse");
+        let x = graph.input("X").typed(DataType::Float).dim(1).dim(6).node();
+        let two = graph.constant(2.0f32);
+        let graph = graph.outputs(-(&x - x.mean(1, true)) * two + x);
+        let model = graph.model().build();
+        let inferred = shape_inference(&model).unwrap();
 
-        let model = builder::Model::new(graph).producer_name("reducer").build();
-        assert_eq!(model, from_python);
+        assert_eq!(inferred, prev_output);
     }
 
     fn read_buf<P: AsRef<std::path::Path>>(path: P) -> Vec<u8> {

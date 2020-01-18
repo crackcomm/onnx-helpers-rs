@@ -1,5 +1,3 @@
-use prost::Message;
-
 use onnx_helpers::prelude::*;
 use onnx_pb::tensor_proto::DataType;
 
@@ -19,7 +17,9 @@ fn main() {
         .dim(10)
         .node();
 
-    let model = graph.outputs(x + y).model().build();
+    let z = (x + y).with_name("Z");
+
+    let model = graph.outputs(z).model().build();
 
     save_model("add.onnx", &model).unwrap();
 }

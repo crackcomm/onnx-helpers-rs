@@ -47,12 +47,5 @@ macro_rules! node_to_inner {
                 &self.inner
             }
         }
-
-        impl AsRef<onnx_pb::NodeProto> for $t {
-            #[inline(always)]
-            fn as_ref(&self) -> &onnx_pb::NodeProto {
-                &self.inner.inner
-            }
-        }
     };
 }

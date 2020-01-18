@@ -20,4 +20,4 @@ package-lock.json
 
 .vscode/
 
-*.onnx
+./*.onnx
