@@ -2,11 +2,16 @@
 
 pub mod attrs;
 pub mod builder;
+pub mod files;
 pub mod nodes;
+// pub mod proto;
+
+pub use self::files::{open_model, save_model};
 
 pub mod prelude {
     pub use crate::attrs::*;
     pub use crate::builder;
+    pub use crate::files::*;
     pub use crate::nodes::ops::*;
     pub use crate::nodes::*;
 }

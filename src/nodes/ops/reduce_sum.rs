@@ -1,6 +1,9 @@
 //! Reduce sum operation.
 
-use crate::{attrs::Attribute, builder, node_to_inner, nodes::Node};
+use crate::{
+    builder, node_to_inner,
+    nodes::{Axes, Node},
+};
 
 /// Reduce sum node.
 pub struct ReduceSum {
@@ -9,11 +12,11 @@ pub struct ReduceSum {
 
 impl ReduceSum {
     /// Creates new reduce sum operation.
-    pub fn new<S: Into<String>, A: Into<Attribute>>(input: S, axes: A, keepdims: bool) -> Self {
+    pub fn new<S: Into<String>, A: Into<Axes>>(input: S, axes: A, keepdims: bool) -> Self {
         ReduceSum {
             inner: builder::Node::new("ReduceSum")
                 .input(input)
-                .attribute("axes", axes)
+                .attribute("axes", axes.into())
                 .attribute("keepdims", keepdims)
                 .build(),
         }

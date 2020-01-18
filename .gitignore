@@ -19,3 +19,5 @@ pkg/
 package-lock.json
 
 .vscode/
+
+*.onnx

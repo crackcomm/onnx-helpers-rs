@@ -108,6 +108,12 @@ impl Graph {
         value
     }
 
+    /// Builds a model builder from graph.
+    #[inline]
+    pub fn model(self) -> builder::Model {
+        builder::Model::new(self.build())
+    }
+
     /// Builds the graph.
     #[inline]
     pub fn build(self) -> GraphProto {

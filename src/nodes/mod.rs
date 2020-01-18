@@ -2,9 +2,9 @@
 
 pub mod ops;
 
-use onnx_pb::{NodeProto, TensorProto};
+use onnx_pb::NodeProto;
 
-use crate::{attrs::Attribute, builder::Bag};
+use crate::builder::Bag;
 
 /// Node wrapper.
 #[derive(Clone)]
@@ -44,14 +44,14 @@ impl Node {
     }
 
     /// Creates new reduce sum operation.
-    pub fn sum<A: Into<Attribute>>(&self, axes: A, keepdims: bool) -> Node {
+    pub fn sum<A: Into<Axes>>(&self, axes: A, keepdims: bool) -> Node {
         let mut node: Node = ops::ReduceSum::new(select_output(&self.inner), axes, keepdims).into();
         maybe_bag_node(self.bag.clone(), &mut node);
         node
     }
 
     /// Creates new reduce mean operation.
-    pub fn mean<A: Into<Attribute>>(&self, axes: A, keepdims: bool) -> Node {
+    pub fn mean<A: Into<Axes>>(&self, axes: A, keepdims: bool) -> Node {
         let mut node: Node =
             ops::ReduceMean::new(select_output(&self.inner), axes, keepdims).into();
         maybe_bag_node(self.bag.clone(), &mut node);
@@ -194,6 +194,21 @@ impl AsRef<Node> for Node {
     #[inline(always)]
     fn as_ref(&self) -> &Node {
         &self
+    }
+}
+
+/// Axes helpers struct.
+pub struct Axes(pub Vec<i64>);
+
+impl From<i64> for Axes {
+    fn from(axes: i64) -> Self {
+        Axes(vec![axes])
+    }
+}
+
+impl From<Vec<i64>> for Axes {
+    fn from(axes: Vec<i64>) -> Self {
+        Axes(axes)
     }
 }
 

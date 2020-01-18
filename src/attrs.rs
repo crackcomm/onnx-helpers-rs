@@ -2,6 +2,8 @@
 
 use onnx_pb::{attribute_proto::AttributeType, AttributeProto, GraphProto, TensorProto};
 
+use crate::nodes::Axes;
+
 /// Attribute constructor.
 pub enum Attribute {
     Float(f32),
@@ -30,6 +32,12 @@ macro_rules! attr_converter {
 impl From<bool> for Attribute {
     fn from(v: bool) -> Self {
         Attribute::Int(if v { 1 } else { 0 })
+    }
+}
+
+impl From<Axes> for Attribute {
+    fn from(axes: Axes) -> Self {
+        Attribute::Ints(axes.0)
     }
 }
 
