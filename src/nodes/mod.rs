@@ -79,6 +79,27 @@ impl Node {
         node
     }
 
+    /// Creates new equal comparison operation.
+    pub fn equal<Rhs: Into<String>>(&self, right: Rhs) -> Node {
+        let mut node: Node = ops::Equal::new(self.select_output(), right).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+
+    /// Creates new greater comparison operation.
+    pub fn greater<Rhs: Into<String>>(&self, right: Rhs) -> Node {
+        let mut node: Node = ops::Greater::new(self.select_output(), right).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+
+    /// Creates new less comparison operation.
+    pub fn less<Rhs: Into<String>>(&self, right: Rhs) -> Node {
+        let mut node: Node = ops::Less::new(self.select_output(), right).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+
     #[inline]
     fn select_output(&self) -> String {
         let node = self.inner.borrow();
