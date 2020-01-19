@@ -12,6 +12,7 @@ pub struct ReduceSum {
 
 impl ReduceSum {
     /// Creates new reduce sum operation.
+    #[inline(always)]
     pub fn new<S: Into<String>, A: Into<Axes>>(input: S, axes: A, keepdims: bool) -> Self {
         ReduceSum {
             inner: builder::Node::new("ReduceSum")

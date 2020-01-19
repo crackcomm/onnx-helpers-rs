@@ -9,6 +9,7 @@ pub struct Neg {
 
 impl Neg {
     /// Creates new Neg operation.
+    #[inline(always)]
     pub fn new<T: Into<String>>(input: T) -> Self {
         Neg {
             inner: builder::Node::new("Neg").input(input).build(),

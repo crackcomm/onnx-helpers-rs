@@ -9,6 +9,7 @@ pub struct Greater {
 
 impl Greater {
     /// Creates new Greater operation.
+    #[inline(always)]
     pub fn new<Lhs: Into<String>, Rhs: Into<String>>(lhs: Lhs, rhs: Rhs) -> Self {
         Greater {
             inner: builder::Node::new("Greater").input(lhs).input(rhs).build(),

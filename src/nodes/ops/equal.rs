@@ -9,6 +9,7 @@ pub struct Equal {
 
 impl Equal {
     /// Creates new Equal operation.
+    #[inline(always)]
     pub fn new<Lhs: Into<String>, Rhs: Into<String>>(lhs: Lhs, rhs: Rhs) -> Self {
         Equal {
             inner: builder::Node::new("Equal").input(lhs).input(rhs).build(),

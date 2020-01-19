@@ -9,6 +9,7 @@ pub struct Less {
 
 impl Less {
     /// Creates new Less operation.
+    #[inline(always)]
     pub fn new<Lhs: Into<String>, Rhs: Into<String>>(lhs: Lhs, rhs: Rhs) -> Self {
         Less {
             inner: builder::Node::new("Less").input(lhs).input(rhs).build(),

@@ -9,6 +9,7 @@ pub struct Mul {
 
 impl Mul {
     /// Creates new Mul operation.
+    #[inline(always)]
     pub fn new<Lhs: Into<String>, Rhs: Into<String>>(lhs: Lhs, rhs: Rhs) -> Self {
         Mul {
             inner: builder::Node::new("Mul").input(lhs).input(rhs).build(),

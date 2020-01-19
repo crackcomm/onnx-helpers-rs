@@ -9,6 +9,7 @@ pub struct Div {
 
 impl Div {
     /// Creates new Div operation.
+    #[inline(always)]
     pub fn new<Lhs: Into<String>, Rhs: Into<String>>(lhs: Lhs, rhs: Rhs) -> Self {
         Div {
             inner: builder::Node::new("Div").input(lhs).input(rhs).build(),

@@ -2,6 +2,8 @@
 
 pub mod ops;
 
+pub use self::ops::concat;
+
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -72,9 +74,23 @@ impl Node {
         node
     }
 
+    /// Creates new reduce max operation.
+    pub fn max<A: Into<Axes>>(&self, axes: A, keepdims: bool) -> Node {
+        let mut node: Node = ops::ReduceMax::new(self.select_output(), axes, keepdims).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+
     /// Creates new reduce mean operation.
     pub fn mean<A: Into<Axes>>(&self, axes: A, keepdims: bool) -> Node {
         let mut node: Node = ops::ReduceMean::new(self.select_output(), axes, keepdims).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+
+    /// Creates new reduce min operation.
+    pub fn min<A: Into<Axes>>(&self, axes: A, keepdims: bool) -> Node {
+        let mut node: Node = ops::ReduceMin::new(self.select_output(), axes, keepdims).into();
         maybe_bag_node(self.bag.clone(), &mut node);
         node
     }
@@ -100,6 +116,41 @@ impl Node {
         node
     }
 
+    /// Creates new logical and operation.
+    pub fn and<Rhs: Into<String>>(&self, right: Rhs) -> Node {
+        let mut node: Node = ops::And::new(self.select_output(), right).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+
+    /// Creates new logical or operation.
+    pub fn or<Rhs: Into<String>>(&self, right: Rhs) -> Node {
+        let mut node: Node = ops::Or::new(self.select_output(), right).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+
+    /// Creates new relu activation operation.
+    pub fn relu(&self) -> Node {
+        let mut node: Node = ops::Relu::new(self.select_output()).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+
+    /// Creates new tanh activation operation.
+    pub fn tanh(&self) -> Node {
+        let mut node: Node = ops::Tanh::new(self.select_output()).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+
+    /// Creates new size operation.
+    pub fn size(&self) -> Node {
+        let mut node: Node = ops::Size::new(self.select_output()).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
+    }
+
     #[inline]
     fn select_output(&self) -> String {
         let node = self.inner.borrow();
@@ -112,11 +163,12 @@ impl Node {
 }
 
 #[macro_export]
-macro_rules! impl_node_op {
+macro_rules! impl_nodes_op {
     ( $t:ident, $k:ident, $f:ident ) => {
         impl<Rhs: AsRef<Node>> std::ops::$k<Rhs> for $t {
             type Output = Node;
 
+            #[inline(always)]
             fn $f(self, rhs: Rhs) -> Self::Output {
                 let mut node: Node = ops::$k::new(self.select_output(), rhs.as_ref()).into();
                 maybe_bag_node(self.bag.clone(), &mut node);
@@ -127,6 +179,7 @@ macro_rules! impl_node_op {
         impl<Rhs: AsRef<Node>> std::ops::$k<Rhs> for &$t {
             type Output = Node;
 
+            #[inline(always)]
             fn $f(self, rhs: Rhs) -> Self::Output {
                 let mut node: Node = ops::$k::new(self.select_output(), rhs.as_ref()).into();
                 maybe_bag_node(self.bag.clone(), &mut node);
@@ -136,87 +189,39 @@ macro_rules! impl_node_op {
     };
 }
 
-impl_node_op!(Node, Add, add);
+#[macro_export]
+macro_rules! impl_node_op {
+    ( $t:ident, $k:ident, $f:ident ) => {
+        impl std::ops::$k for &$t {
+            type Output = Node;
 
-impl<Rhs: AsRef<Node>> std::ops::Sub<Rhs> for &Node {
-    type Output = Node;
+            #[inline(always)]
+            fn $f(self) -> Self::Output {
+                let mut node: Node = ops::$k::new(self.select_output()).into();
+                maybe_bag_node(self.bag.clone(), &mut node);
+                node
+            }
+        }
 
-    fn sub(self, rhs: Rhs) -> Self::Output {
-        let mut node: Node = ops::Sub::new(self.select_output(), rhs.as_ref()).into();
-        maybe_bag_node(self.bag.clone(), &mut node);
-        node
-    }
+        impl std::ops::$k for $t {
+            type Output = Node;
+
+            #[inline(always)]
+            fn $f(self) -> Self::Output {
+                let mut node: Node = ops::$k::new(self.select_output()).into();
+                maybe_bag_node(self.bag.clone(), &mut node);
+                node
+            }
+        }
+    };
 }
 
-impl<Rhs: AsRef<Node>> std::ops::Sub<Rhs> for Node {
-    type Output = Node;
-
-    fn sub(self, rhs: Rhs) -> Self::Output {
-        let mut node: Node = ops::Sub::new(self.select_output(), rhs.as_ref()).into();
-        maybe_bag_node(self.bag.clone(), &mut node);
-        node
-    }
-}
-
-impl<Rhs: AsRef<Node>> std::ops::Mul<Rhs> for &Node {
-    type Output = Node;
-
-    fn mul(self, rhs: Rhs) -> Self::Output {
-        let mut node: Node = ops::Mul::new(self.select_output(), rhs.as_ref()).into();
-        maybe_bag_node(self.bag.clone(), &mut node);
-        node
-    }
-}
-
-impl<Rhs: AsRef<Node>> std::ops::Mul<Rhs> for Node {
-    type Output = Node;
-
-    fn mul(self, rhs: Rhs) -> Self::Output {
-        let mut node: Node = ops::Mul::new(self.select_output(), rhs.as_ref()).into();
-        maybe_bag_node(self.bag.clone(), &mut node);
-        node
-    }
-}
-
-impl<Rhs: AsRef<Node>> std::ops::Div<Rhs> for &Node {
-    type Output = Node;
-
-    fn div(self, rhs: Rhs) -> Self::Output {
-        let mut node: Node = ops::Div::new(self.select_output(), rhs.as_ref()).into();
-        maybe_bag_node(self.bag.clone(), &mut node);
-        node
-    }
-}
-
-impl<Rhs: AsRef<Node>> std::ops::Div<Rhs> for Node {
-    type Output = Node;
-
-    fn div(self, rhs: Rhs) -> Self::Output {
-        let mut node: Node = ops::Div::new(self.select_output(), rhs.as_ref()).into();
-        maybe_bag_node(self.bag.clone(), &mut node);
-        node
-    }
-}
-
-impl std::ops::Neg for &Node {
-    type Output = Node;
-
-    fn neg(self) -> Self::Output {
-        let mut node: Node = ops::Neg::new(self.select_output()).into();
-        maybe_bag_node(self.bag.clone(), &mut node);
-        node
-    }
-}
-
-impl std::ops::Neg for Node {
-    type Output = Node;
-
-    fn neg(self) -> Self::Output {
-        let mut node: Node = ops::Neg::new(self.select_output()).into();
-        maybe_bag_node(self.bag.clone(), &mut node);
-        node
-    }
-}
+impl_nodes_op!(Node, Add, add);
+impl_nodes_op!(Node, Sub, sub);
+impl_nodes_op!(Node, Mul, mul);
+impl_nodes_op!(Node, Div, div);
+impl_node_op!(Node, Neg, neg);
+impl_node_op!(Node, Not, not);
 
 impl From<NodeProto> for Node {
     fn from(inner: NodeProto) -> Self {

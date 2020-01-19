@@ -9,6 +9,7 @@ pub struct Add {
 
 impl Add {
     /// Creates new Add operation.
+    #[inline(always)]
     pub fn new<Lhs: Into<String>, Rhs: Into<String>>(lhs: Lhs, rhs: Rhs) -> Self {
         Add {
             inner: builder::Node::new("Add").input(lhs).input(rhs).build(),

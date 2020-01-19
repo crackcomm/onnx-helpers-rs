@@ -9,7 +9,7 @@ ONNX graph construction helpers.
 
 ```Toml
 [dependencies]
-onnx-helpers = "^1.0.0"
+onnx-helpers = "^1.3.0"
 ```
 
 ## Example

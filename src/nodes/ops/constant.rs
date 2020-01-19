@@ -11,6 +11,7 @@ pub struct Constant {
 
 impl Constant {
     /// Creates new Constant operation.
+    #[inline(always)]
     pub fn new<N: Into<String>, T: Into<TensorProto>>(name: N, value: T) -> Self {
         Constant {
             inner: builder::Node::new("Constant")

@@ -9,6 +9,7 @@ pub struct Pow {
 
 impl Pow {
     /// Creates new Pow operation.
+    #[inline(always)]
     pub fn new<Lhs: Into<String>, Rhs: Into<String>>(lhs: Lhs, rhs: Rhs) -> Self {
         Pow {
             inner: builder::Node::new("Pow").input(lhs).input(rhs).build(),

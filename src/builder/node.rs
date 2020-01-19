@@ -61,17 +61,43 @@ impl Node {
         self
     }
 
-    /// Inserts node inputs.
+    /// Inserts node input.
     #[inline]
     pub fn input<S: Into<String>>(mut self, input: S) -> Self {
         self.inputs.push(input.into());
         self
     }
 
-    /// Inserts node outputs.
+    /// Inserts node output.
     #[inline]
     pub fn output<S: Into<String>>(mut self, output: S) -> Self {
         self.outputs.push(output.into());
+        self
+    }
+
+    /// Inserts node inputs.
+    #[inline]
+    pub fn inputs<I>(mut self, inputs: I) -> Self
+    where
+        I: IntoIterator,
+        I::Item: Into<String>,
+    {
+        for input in inputs {
+            self.inputs.push(input.into());
+        }
+        self
+    }
+
+    /// Inserts node outputs.
+    #[inline]
+    pub fn outputs<I>(mut self, outputs: I) -> Self
+    where
+        I: IntoIterator,
+        I::Item: Into<String>,
+    {
+        for output in outputs {
+            self.outputs.push(output.into());
+        }
         self
     }
 
