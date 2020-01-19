@@ -1,3 +1,4 @@
+mod abs;
 mod add;
 mod and;
 mod concat;
@@ -21,6 +22,7 @@ mod sqrt;
 mod sub;
 mod tanh;
 
+pub use self::abs::*;
 pub use self::add::*;
 pub use self::and::*;
 pub use self::concat::*;

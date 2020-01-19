@@ -2,8 +2,6 @@
 
 pub mod ops;
 
-pub use self::ops::concat;
-
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -51,6 +49,13 @@ impl Node {
             inner.name = name;
         }
         self
+    }
+
+    /// Creates new absolute operation.
+    pub fn abs(&self) -> Node {
+        let mut node: Node = ops::Abs::new(self.select_output()).into();
+        maybe_bag_node(self.bag.clone(), &mut node);
+        node
     }
 
     /// Creates new square root operation.

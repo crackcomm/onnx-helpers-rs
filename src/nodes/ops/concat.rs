@@ -10,26 +10,17 @@ pub struct Concat {
 impl Concat {
     /// Creates new Concat operation.
     #[inline(always)]
-    pub fn new<I>(inputs: I) -> Self
+    pub fn new<I>(axis: i64, inputs: I) -> Self
     where
         I: IntoIterator,
         I::Item: Into<String>,
     {
         Concat {
-            inner: builder::Node::new("Concat").inputs(inputs).build(),
+            inner: builder::Node::new("Concat")
+                .inputs(inputs)
+                .attribute("axis", axis)
+                .build(),
         }
-    }
-}
-
-/// Creates new Concat operation.
-#[inline(always)]
-pub fn concat<I>(inputs: I) -> Concat
-where
-    I: IntoIterator,
-    I::Item: Into<String>,
-{
-    Concat {
-        inner: builder::Node::new("Concat").inputs(inputs).build(),
     }
 }
 

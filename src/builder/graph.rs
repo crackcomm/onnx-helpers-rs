@@ -4,7 +4,7 @@ use onnx_pb::{GraphProto, NodeProto, TensorProto, ValueInfoProto};
 
 use crate::{
     builder::{self, Bag, Marker},
-    nodes,
+    nodes::*,
 };
 
 /// Graph builder.
@@ -46,11 +46,25 @@ impl Graph {
 
     /// Creates constant node in a graph.
     #[inline]
-    pub fn constant<T: Into<TensorProto>>(&mut self, tensor: T) -> nodes::Node {
-        let node: nodes::Node =
-            nodes::ops::Constant::new(format!("Constant_{}", self.constants), tensor).into();
-        self.nodes.push(node.clone().into());
+    pub fn constant<T: Into<TensorProto>>(&mut self, tensor: T) -> Node {
+        let mut node: Node =
+            ops::Constant::new(format!("Constant_{}", self.constants), tensor).into();
+        node.bag = Some(self.bag.clone());
+        self.bag.node(node.inner.clone());
         self.constants += 1;
+        node
+    }
+
+    /// Creates a concat node in a graph.
+    #[inline(always)]
+    pub fn concat<I>(&mut self, axis: i64, inputs: I) -> Node
+    where
+        I: IntoIterator,
+        I::Item: Into<String>,
+    {
+        let mut node: Node = ops::Concat::new(axis, inputs).into();
+        node.bag = Some(self.bag.clone());
+        self.bag.node(node.inner.clone());
         node
     }
 
