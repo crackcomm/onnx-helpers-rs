@@ -133,10 +133,14 @@ impl Graph {
     pub fn build(self) -> GraphProto {
         let mut nodes = self.nodes;
         nodes.extend(self.bag.nodes().into_iter().map(Into::into));
+        nodes.sort_by(|a, b| a.name.partial_cmp(&b.name).unwrap());
+        nodes.dedup_by(|a, b| a.name == b.name);
         let mut inputs = self.inputs;
         inputs.extend(self.bag.inputs().into_iter().map(Into::into));
+        inputs.dedup_by(|a, b| a.name == b.name);
         let mut outputs = self.outputs;
         outputs.extend(self.bag.outputs().into_iter().map(Into::into));
+        outputs.dedup_by(|a, b| a.name == b.name);
         GraphProto {
             name: self.name,
             node: nodes,

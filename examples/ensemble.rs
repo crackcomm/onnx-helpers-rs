@@ -1,0 +1,25 @@
+use onnx_helpers::prelude::*;
+use onnx_pb::tensor_proto::DataType;
+use onnx_shape_inference::shape_inference;
+
+fn main() {
+    let mut graph = builder::Graph::new("stddev");
+    let x = graph.input("X").typed(DataType::Float).dim(1).dim(6).node();
+    let std = stddev(&mut graph, &x);
+    let mrev = mean_reverse(&mut graph, &x);
+    let graph = graph
+        .outputs(std.with_name("stddev"))
+        .outputs(mrev.with_name("mean_reverse"));
+    let model = shape_inference(&graph.model().build()).unwrap();
+    save_model("ensemble.onnx", &model).unwrap();
+}
+
+fn stddev(graph: &mut builder::Graph, x: &Node) -> Node {
+    let two = graph.constant(2.0f32).with_name("two");
+    (x - x.mean(1, true)).abs().pow(two).mean(1, true).sqrt()
+}
+
+fn mean_reverse(graph: &mut builder::Graph, x: &Node) -> Node {
+    let two = graph.constant(2.0f32).with_name("two");
+    -(x - x.mean(1, true)) * two + x
+}
