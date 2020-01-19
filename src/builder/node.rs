@@ -1,6 +1,6 @@
 //! Node builder.
 
-use onnx_pb::{AttributeProto, NodeProto};
+use onnx_pb::NodeProto;
 
 use crate::{
     attrs::{make_attribute, Attribute},

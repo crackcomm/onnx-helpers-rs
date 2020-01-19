@@ -131,7 +131,6 @@ impl std::fmt::Display for Attribute {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Attribute::Float(v) => write!(f, "float_{:.2}", v),
-            Attribute::Floats(v) => write!(f, "floats_{:?}", v),
             Attribute::Floats(v) => write!(
                 f,
                 "ints_{}",

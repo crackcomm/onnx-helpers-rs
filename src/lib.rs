@@ -31,7 +31,7 @@ mod tests {
             ModelProto::decode(read_buf("tests/mean-reverse.onnx").as_slice()).unwrap();
         let mut graph = builder::Graph::new("reverse");
         let x = graph.input("X").typed(DataType::Float).dim(1).dim(6).node();
-        let two = graph.constant(2.0f32);
+        let two = graph.constant("two", 2.0f32);
         let graph = graph.outputs(-(&x - x.mean(1, true)) * two + x);
         let model = graph.model().build();
         let inferred = shape_inference(&model).unwrap();
