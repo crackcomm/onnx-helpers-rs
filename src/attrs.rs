@@ -5,6 +5,7 @@ use onnx_pb::{attribute_proto::AttributeType, AttributeProto, GraphProto, Tensor
 use crate::nodes::Axes;
 
 /// Attribute constructor.
+#[derive(Clone, Debug)]
 pub enum Attribute {
     Float(f32),
     Floats(Vec<f32>),
@@ -124,4 +125,51 @@ pub(crate) fn make_attribute<S: Into<String>, A: Into<Attribute>>(
         }
     };
     attr_proto
+}
+
+impl std::fmt::Display for Attribute {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Attribute::Float(v) => write!(f, "float_{:.2}", v),
+            Attribute::Floats(v) => write!(f, "floats_{:?}", v),
+            Attribute::Floats(v) => write!(
+                f,
+                "ints_{}",
+                v.iter()
+                    .map(|t| format!("{:.2}", t))
+                    .collect::<Vec<_>>()
+                    .join("_")
+            ),
+            Attribute::Int(v) => write!(f, "int_{}", v),
+            Attribute::Ints(v) => write!(
+                f,
+                "ints_{}",
+                v.iter()
+                    .map(|t| t.to_string())
+                    .collect::<Vec<_>>()
+                    .join("_")
+            ),
+            Attribute::Bytes(v) => write!(f, "bytes_{:?}", v),
+            Attribute::String(v) => write!(f, "string_{}", v),
+            Attribute::Strings(v) => write!(f, "strings_{}", v.join("_")),
+            Attribute::Tensor(v) => write!(f, "tensor_{}", v.name),
+            Attribute::Tensors(v) => write!(
+                f,
+                "tensors_{}",
+                v.iter()
+                    .map(|t| t.name.as_str())
+                    .collect::<Vec<_>>()
+                    .join("_")
+            ),
+            Attribute::Graph(v) => write!(f, "graph_{:?}", v),
+            Attribute::Graphs(v) => write!(
+                f,
+                "graphs_{}",
+                v.iter()
+                    .map(|t| t.name.as_str())
+                    .collect::<Vec<_>>()
+                    .join("_")
+            ),
+        }
+    }
 }

@@ -17,7 +17,7 @@ pub struct Node {
     name: Option<String>,
     doc_string: Option<String>,
     domain: Option<String>,
-    attributes: Vec<AttributeProto>,
+    attributes: Vec<(String, Attribute)>,
     pub(crate) bag: Option<Bag>,
 }
 
@@ -104,7 +104,7 @@ impl Node {
     /// Inserts node attributes.
     #[inline]
     pub fn attribute<S: Into<String>, A: Into<Attribute>>(mut self, name: S, attribute: A) -> Self {
-        self.attributes.push(make_attribute(name, attribute));
+        self.attributes.push((name.into(), attribute.into()));
         self
     }
 
@@ -114,19 +114,27 @@ impl Node {
         let name = if let Some(name) = self.name {
             name
         } else {
+            let attrs = self
+                .attributes
+                .iter()
+                .map(|(name, attr)| format!("{}_{}", name, attr))
+                .collect::<Vec<String>>()
+                .join("_");
             if self.inputs.len() == 2 {
                 format!(
-                    "{}_{}_{}",
+                    "{}_{}_{}_{}",
                     self.inputs.get(0).unwrap(),
                     self.op_type,
-                    self.inputs.get(1).unwrap()
+                    self.inputs.get(1).unwrap(),
+                    attrs
                 )
             } else {
                 format!(
-                    "S{}_{}_{}E",
+                    "S{}_{}_{}_{}E",
                     self.op_type,
                     self.inputs.join("_"),
-                    self.op_type
+                    self.op_type,
+                    attrs
                 )
             }
         };
@@ -135,6 +143,11 @@ impl Node {
         } else {
             vec![format!("{}O", name)]
         };
+        let attributes = self
+            .attributes
+            .into_iter()
+            .map(|(name, attr)| make_attribute(name, attr))
+            .collect();
         let proto = NodeProto {
             name,
             domain: self.domain.unwrap_or_default(),
@@ -142,7 +155,7 @@ impl Node {
             doc_string: self.doc_string.unwrap_or_default(),
             input: self.inputs,
             output: output,
-            attribute: self.attributes,
+            attribute: attributes,
         };
         let mut node = nodes::Node::from_proto(proto);
         nodes::maybe_bag_node(self.bag.clone(), &mut node);
