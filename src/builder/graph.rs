@@ -46,9 +46,8 @@ impl Graph {
 
     /// Creates constant node in a graph.
     #[inline]
-    pub fn constant<T: Into<TensorProto>>(&mut self, tensor: T) -> Node {
-        let mut node: Node =
-            ops::Constant::new(format!("Constant_{}", self.constants), tensor).into();
+    pub fn constant<S: Into<String>, T: Into<TensorProto>>(&mut self, name: S, tensor: T) -> Node {
+        let mut node: Node = ops::Constant::new(name, tensor).into();
         node.bag = Some(self.bag.clone());
         self.bag.node(node.inner.clone());
         self.constants += 1;

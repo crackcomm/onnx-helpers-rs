@@ -15,11 +15,11 @@ fn main() {
 }
 
 fn stddev(graph: &mut builder::Graph, x: &Node) -> Node {
-    let two = graph.constant(2.0f32).with_name("two");
+    let two = graph.constant("two", 2.0f32);
     (x - x.mean(1, true)).abs().pow(two).mean(1, true).sqrt()
 }
 
 fn mean_reverse(graph: &mut builder::Graph, x: &Node) -> Node {
-    let two = graph.constant(2.0f32).with_name("two");
+    let two = graph.constant("two", 2.0f32);
     -(x - x.mean(1, true)) * two + x
 }
