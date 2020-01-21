@@ -47,6 +47,13 @@ impl Node {
         self
     }
 
+    /// Sets node op type.
+    #[inline]
+    pub fn op<S: Into<String>>(mut self, op: S) -> Self {
+        self.op_type = op.into();
+        self
+    }
+
     /// Sets node doc_string.
     #[inline]
     pub fn doc_string<S: Into<String>>(mut self, doc_string: S) -> Self {
