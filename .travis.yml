@@ -10,4 +10,9 @@ notifications:
     on_success: never
 script:
   - "cargo test"
+  - "cargo run --example add"
+  - "cargo run --example concat"
+  - "cargo run --example ensemble"
+  - "cargo run --example mean_reverse"
+  - "cargo run --example stddev"
 sudo: required
