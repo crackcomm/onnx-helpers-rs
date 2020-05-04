@@ -16,4 +16,4 @@ prost = "^0.6.1"
 onnx-pb = "^0.1.1"
 
 [dev-dependencies]
-onnx-shape-inference = "^1.0.0"
+onnx-shape-inference = { git = "https://github.com/crackcomm/onnx-shape-inference-rs.git" }
