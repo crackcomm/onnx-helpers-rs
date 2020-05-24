@@ -1,6 +1,6 @@
 //! Graph builder.
 
-use onnx_pb::{GraphProto, NodeProto, TensorProto, ValueInfoProto};
+use onnx_pb::{GraphProto, NodeProto, TensorProto, TypeProto, ValueInfoProto};
 
 use crate::{
     builder::{self, Bag, Marker},
@@ -85,6 +85,21 @@ impl Graph {
     #[inline]
     pub fn outputs<T: Into<ValueInfoProto>>(mut self, output: T) -> Self {
         self.outputs.push(output.into());
+        self
+    }
+
+    /// Inserts typed graph outputs.
+    #[inline]
+    pub fn outputs_typed<T: Into<ValueInfoProto>, D: Into<TypeProto>>(
+        mut self,
+        output: T,
+        typ: D,
+    ) -> Self {
+        let mut info = output.into();
+        if info.r#type.is_none() {
+            info.r#type = Some(typ.into());
+        }
+        self.outputs.push(info);
         self
     }
 

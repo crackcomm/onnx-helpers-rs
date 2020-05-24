@@ -1,5 +1,5 @@
 use onnx_helpers::prelude::*;
-use onnx_pb::tensor_proto::DataType;
+use onnx_pb::{save_model, tensor_proto::DataType};
 
 fn main() {
     let mut graph = builder::Graph::new("add");
