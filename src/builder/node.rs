@@ -1,12 +1,8 @@
 //! Node builder.
 
-use onnx_pb::NodeProto;
+use onnx_pb::{make_attribute, Attribute, NodeProto};
 
-use crate::{
-    attrs::{make_attribute, Attribute},
-    builder::Bag,
-    nodes,
-};
+use crate::{builder::Bag, nodes};
 
 /// Node builder.
 #[derive(Default, Clone)]

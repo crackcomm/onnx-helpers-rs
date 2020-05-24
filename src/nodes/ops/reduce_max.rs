@@ -1,9 +1,8 @@
 //! Reduce mean operation.
 
-use crate::{
-    builder, node_to_inner,
-    nodes::{Axes, Node},
-};
+use onnx_pb::Axes;
+
+use crate::{builder, node_to_inner, nodes::Node};
 
 /// Reduce mean node.
 pub struct ReduceMax {

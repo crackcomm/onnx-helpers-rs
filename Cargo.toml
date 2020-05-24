@@ -13,7 +13,7 @@ repository = "https://github.com/crackcomm/onnx-helpers-rs.git"
 [dependencies]
 bytes = "^0.5.3"
 prost = "^0.6.1"
-onnx-pb = "^0.1.1"
+onnx-pb = "^0.1.4"
 
 [dev-dependencies]
 onnx-shape-inference = "^1.1.0"

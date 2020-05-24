@@ -5,7 +5,7 @@ pub mod ops;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use onnx_pb::NodeProto;
+use onnx_pb::{Axes, NodeProto};
 
 use crate::builder::Bag;
 
@@ -256,21 +256,6 @@ impl AsRef<Node> for Node {
     #[inline(always)]
     fn as_ref(&self) -> &Node {
         &self
-    }
-}
-
-/// Axes helpers struct.
-pub struct Axes(pub Vec<i64>);
-
-impl From<i64> for Axes {
-    fn from(axes: i64) -> Self {
-        Axes(vec![axes])
-    }
-}
-
-impl From<Vec<i64>> for Axes {
-    fn from(axes: Vec<i64>) -> Self {
-        Axes(axes)
     }
 }
 
