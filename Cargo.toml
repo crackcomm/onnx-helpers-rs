@@ -1,6 +1,6 @@
 [package]
 name = "onnx-helpers"
-version = "2.2.0"
+version = "2.2.1"
 authors = ["Łukasz Kurowski <crackcomm@gmail.com>"]
 edition = "2018"
 license = "MIT"
@@ -14,6 +14,4 @@ repository = "https://github.com/crackcomm/onnx-helpers-rs.git"
 bytes = "^0.5.3"
 prost = "^0.6.1"
 onnx-pb = "^0.1.4"
-
-[dev-dependencies]
-onnx-shape-inference = "^1.1.0"
+petgraph = "^0.5.1"

@@ -147,8 +147,8 @@ impl Graph {
     pub fn build(self) -> GraphProto {
         let mut nodes = self.nodes;
         nodes.extend(self.bag.nodes().into_iter().map(Into::into));
-        nodes.sort_by(|a, b| a.name.partial_cmp(&b.name).unwrap());
         nodes.dedup_by(|a, b| a.name == b.name);
+        sort_nodes(&mut nodes);
         let mut inputs = self.inputs;
         inputs.extend(self.bag.inputs().into_iter().map(Into::into));
         inputs.dedup_by(|a, b| a.name == b.name);
@@ -171,4 +171,33 @@ impl Into<GraphProto> for Graph {
     fn into(self) -> GraphProto {
         self.build()
     }
+}
+
+fn sort_nodes(nodes: &mut Vec<NodeProto>) {
+    use std::collections::HashMap;
+    use std::iter::FromIterator;
+
+    use petgraph::{algo::toposort, graphmap::DiGraphMap};
+
+    let mut g = DiGraphMap::new();
+    for node in nodes.iter() {
+        for input in node.input.iter() {
+            g.add_edge(input, &node.name, 1);
+        }
+        for output in node.output.iter() {
+            g.add_edge(&node.name, output, 1);
+        }
+    }
+    let sorted: HashMap<String, usize> = HashMap::from_iter(
+        toposort(&g, None)
+            .unwrap()
+            .into_iter()
+            .enumerate()
+            .map(|(i, s)| (s.to_owned(), i)),
+    );
+    nodes.sort_by(|a, b| {
+        let a = sorted.get(&a.name).unwrap();
+        let b = sorted.get(&b.name).unwrap();
+        a.partial_cmp(b).unwrap()
+    });
 }
